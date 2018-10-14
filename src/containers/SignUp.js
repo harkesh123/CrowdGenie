@@ -17,7 +17,8 @@ import {
     userGithubSignIn,
     userGoogleSignIn,
     userSignUp,
-    userTwitterSignIn
+    userTwitterSignIn,
+    showAuthMessage
 } from 'actions/Auth';
 
 const roles = [
@@ -58,7 +59,32 @@ class SignUp extends React.Component {
         if (this.props.authUser !== null) {
             this.props.history.push('/app/dashboard/default');
         }
+        if(this.props.verify_User){
+            this.props.history.push('/verify')
+        }
+
     }
+    
+    click=()=>{
+        const {
+            name,
+            email,
+            password,
+            profile,
+            phone_number
+        } = this.state;
+        const {showMessage, loader, alertMessage} = this.props;
+        if(name&&email&&password&&profile&&phone_number){
+            if(phone_number.length>12){
+            this.props.showAuthLoader();
+            this.props.userSignUp({email, password,profile,name,phone_number});
+            }
+        }
+        else{
+           this.props.showAuthMessage("enter all the details")
+        }
+    }
+
 
     render() {
         const {
@@ -148,10 +174,7 @@ class SignUp extends React.Component {
                                 </TextField>
 
                                 <div className="mb-3 d-flex align-items-center justify-content-between">
-                                    <Button variant="raised" onClick={() => {
-                                        this.props.showAuthLoader();
-                                        this.props.userSignUp({email, password,profile,name,phone_number});
-                                    }} color="primary">
+                                    <Button variant="raised" onClick={this.click} color="primary">
                                         <IntlMessages
                                             id="appModule.regsiter"/>
                                     </Button>
@@ -226,8 +249,8 @@ class SignUp extends React.Component {
 }
 
 const mapStateToProps = ({auth}) => {
-    const {loader, alertMessage, showMessage, authUser} = auth;
-    return {loader, alertMessage, showMessage, authUser}
+    const {loader, alertMessage, showMessage, authUser,verify_User} = auth;
+    return {loader, alertMessage, showMessage, authUser,verify_User}
 };
 
 export default connect(mapStateToProps, {
@@ -237,5 +260,6 @@ export default connect(mapStateToProps, {
     userFacebookSignIn,
     userGoogleSignIn,
     userGithubSignIn,
-    userTwitterSignIn
+    userTwitterSignIn,
+    showAuthMessage
 })(SignUp);

@@ -1,4 +1,6 @@
 import {
+    VERIFY_USER,
+    VERIFY_SUCCESS,
     HIDE_MESSAGE,
     INIT_URL,
     ON_HIDE_LOADER,
@@ -32,9 +34,20 @@ export const userSignIn = (user) => {
         payload: user
     };
 };
+export const verifyUser = (user) => {
+    return {
+        type: VERIFY_USER,
+        payload: user
+    };
+};
 export const userSignOut = () => {
     return {
         type: SIGNOUT_USER
+    };
+};
+export const verifySuccess = () => {
+    return {
+        type: VERIFY_SUCCESS
     };
 };
 export const userSignUpSuccess = (authUser) => {

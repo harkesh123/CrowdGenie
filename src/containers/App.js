@@ -41,6 +41,7 @@ import {
 
 import MainApp from 'app/index';
 import SignIn from './SignIn';
+import Verify from './Verification';
 import SignUp from './SignUp';
 import {setInitUrl} from '../actions/Auth';
 import RTL from 'util/RTL';
@@ -140,7 +141,7 @@ class App extends Component {
 
     render() {
         const {match, location, themeColor, isDarkTheme, locale, authUser, initURL, isDirectionRTL} = this.props;
-        let applyTheme = createMuiTheme(indigoTheme);
+        let applyTheme = createMuiTheme(purpleTheme);
         if (isDarkTheme) {
             applyTheme = createMuiTheme(darkTheme)
         } else {
@@ -176,6 +177,7 @@ class App extends Component {
                                     <RestrictedRoute path={`${match.url}app`} authUser={authUser}
                                                      component={MainApp}/>
                                     <Route path='/signin' component={SignIn}/>
+                                    <Route path='/verify' component={Verify}/>
                                     <Route path='/signup' component={SignUp}/>
                                     <Route
                                         component={asyncComponent(() => import('app/routes/extraPages/routes/404'))}/>

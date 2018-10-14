@@ -13,9 +13,11 @@ import {
     SIGNIN_TWITTER_USER,
     SIGNIN_USER,
     SIGNOUT_USER,
-    SIGNUP_USER
+    SIGNUP_USER,
+    VERIFY_USER,
+    VERIFY_SUCCESS
 } from "constants/ActionTypes";
-import {showAuthMessage, userSignInSuccess, userSignOutSuccess, userSignUpSuccess} from "actions/Auth";
+import {showAuthMessage, userSignInSuccess, userSignOutSuccess, userSignUpSuccess,verifySuccess} from "actions/Auth";
 import {
     userFacebookSignInSuccess,
     userGithubSignInSuccess,
@@ -23,39 +25,35 @@ import {
     userTwitterSignInSuccess
 } from "../actions/Auth";
 
+let user_name;
+
 const createUserWithEmailPasswordRequest = async (email, password,profile,name,phone_number) =>
-    await Auth.signUp({
+  await Auth.signUp({
     username:email,
     password,
     attributes: {
-        email,          // optional
+        email,          
         phone_number, 
         name,
-        profile  // optional - E.164 number convention
-        // other custom attributes 
+        profile   
     },
-    validationData: []  //optional
+    validationData: []  
     })
-    .then(data => data)
-    .catch(err => err);
+    .then(data => {return data})
+    .catch(err => {return err});
 
-// After retrieveing the confirmation code from the user
-// Auth.confirmSignUp(username, code, {
-//     // Optional. Force user confirmation irrespective of existing alias. By default set to True.
-//     forceAliasCreation: true    
-// }).then(data => console.log(data))
-//   .catch(err => console.log(err));
 
+const verifyWithCode = async (code) =>
+  await Auth.confirmSignUp(user_name, code)
+  .then(data => {return data})
+  .catch(err =>  {return err});
 
 const signInUserWithEmailPasswordRequest = async (email, password) =>
     await Auth.signIn(email, password)
-    .then(user => user.sub)
+    .then(user => user)
     .catch(err => err);
 
 const signOutRequest = async () =>{}
-
-
-const signInUserWithGoogleRequest = async () =>{}
 
 const signInUserWithFacebookRequest = async () =>{}
 
@@ -65,107 +63,64 @@ const signInUserWithTwitterRequest = async () =>{}
 
 function* createUserWithEmailPassword({payload}) {
     const {email, password,profile,name,phone_number} = payload;
-    if(!(email&&password&&profile&&name&&phone_number)){
-        
-        yield put(showAuthMessage("Enter all the details"));
+    user_name=email;
+     try {
+     const signUpUser = yield call(createUserWithEmailPasswordRequest, email, password,profile,name,phone_number);
+     console.log(signUpUser);
+     if (!signUpUser.userSub) {
+        yield put(showAuthMessage(signUpUser.message));
+     } else {
+         //localStorage.setItem('user_id', signUpUser.userSub);
+       yield put(userSignUpSuccess());
+     }
     }
-    else{
-        try {
-        const signUpUser = yield call(createUserWithEmailPasswordRequest, email, password,profile,name,phone_number);
-        console.log(signUpUser);
-        if (!signUpUser.userSub) {
-            yield put(showAuthMessage(signUpUser.message));
-        } else {
-            localStorage.setItem('user_id', signUpUser.userSub);
-            yield put(userSignUpSuccess(signUpUser.userSub));
-        }
-    }
-       catch (error) {
-        console.log(error)
-        yield put(showAuthMessage(error));
-    }
-    }
-
-}
-
-function* signInUserWithGoogle() {
-    try {
-        const signUpUser = yield call(signInUserWithGoogleRequest);
-        if (signUpUser.message) {
-            yield put(showAuthMessage(signUpUser.message));
-        } else {
-            localStorage.setItem('user_id', signUpUser.user.uid);
-            yield put(userGoogleSignInSuccess(signUpUser.user.uid));
-        }
-    } catch (error) {
-        yield put(showAuthMessage(error));
+    catch (error) {
+     console.log(error)
+    yield put(showAuthMessage(error));
     }
 }
 
-
-function* signInUserWithFacebook() {
-    try {
-        const signUpUser = yield call(signInUserWithFacebookRequest);
-        if (signUpUser.message) {
-            yield put(showAuthMessage(signUpUser.message));
-        } else {
-            localStorage.setItem('user_id', signUpUser.user.uid);
-            yield put(userFacebookSignInSuccess(signUpUser.user.uid));
-        }
-    } catch (error) {
-        yield put(showAuthMessage(error));
-    }
-}
-
-
-function* signInUserWithGithub() {
-    try {
-        const signUpUser = yield call(signInUserWithGithubRequest);
-        if (signUpUser.message) {
-            yield put(showAuthMessage(signUpUser.message));
-        } else {
-            localStorage.setItem('user_id', signUpUser.user.uid);
-            yield put(userGithubSignInSuccess(signUpUser.user.uid));
-        }
-    } catch (error) {
-        yield put(showAuthMessage(error));
-    }
-}
+// function* signInUserWithGoogle() {
+//     try {
+//         const signUpUser = yield call(signInUserWithGoogleRequest);
+//         if (signUpUser.message) {
+//             yield put(showAuthMessage(signUpUser.message));
+//         } else {
+//             localStorage.setItem('user_id', signUpUser.user.uid);
+//             yield put(userGoogleSignInSuccess(signUpUser.user.uid));
+//         }
+//     } catch (error) {
+//         yield put(showAuthMessage(error));
+//     }
+// }
 
 
-function* signInUserWithTwitter() {
-    try {
-        const signUpUser = yield call(signInUserWithTwitterRequest);
-        if (signUpUser.message) {
-            if (signUpUser.message.length > 100) {
-                yield put(showAuthMessage('Your request has been canceled.'));
-            } else {
-                yield put(showAuthMessage(signUpUser.message));
-            }
-        } else {
-            localStorage.setItem('user_id', signUpUser.user.uid);
-            yield put(userTwitterSignInSuccess(signUpUser.user.uid));
-        }
-    } catch (error) {
-        yield put(showAuthMessage(error));
-    }
-}
 
 function* signInUserWithEmailPassword({payload}) {
     const {email, password} = payload;
-    try {
-        const signInUser = yield call(signInUserWithEmailPasswordRequest, email, password);
-        if (signInUser.message) {
-            yield put(showAuthMessage(signInUser.message));
-        } else {
-            localStorage.setItem('user_id', signInUser.user.uid);
-            yield put(userSignInSuccess(signInUser.user.uid));
-        }
-    } catch (error) {
-        yield put(showAuthMessage(error));
+    // try {
+         const signInUser = yield call(signInUserWithEmailPasswordRequest, email, password);
+         console.log(signInUser)
+    //     if (signInUser.message) {
+    //         yield put(showAuthMessage(signInUser.message));
+    //     } else {
+    //         localStorage.setItem('user_id', signInUser.user.uid);
+    //         yield put(userSignInSuccess(signInUser.user.uid));
+    //     }
+    // } catch (error) {
+    //     yield put(showAuthMessage(error));
+    // }
+}
+function* verifyUserWithCode({payload}) {
+    const {code} = payload;
+    const verify = yield call(verifyWithCode, code);
+    if(verify!=="SUCCESS"){
+    yield put(verifySuccess())
+    }
+    else{
+    yield put(showAuthMessage(verify.message))
     }
 }
-
 function* signOut() {
     try {
         const signOutUser = yield call(signOutRequest);
@@ -184,20 +139,12 @@ export function* createUserAccount() {
     yield takeEvery(SIGNUP_USER, createUserWithEmailPassword);
 }
 
-export function* signInWithGoogle() {
-    yield takeEvery(SIGNIN_GOOGLE_USER, signInUserWithGoogle);
-}
+// export function* signInWithGoogle() {
+//     yield takeEvery(SIGNIN_GOOGLE_USER, signInUserWithGoogle);
+// }
 
-export function* signInWithFacebook() {
-    yield takeEvery(SIGNIN_FACEBOOK_USER, signInUserWithFacebook);
-}
-
-export function* signInWithTwitter() {
-    yield takeEvery(SIGNIN_TWITTER_USER, signInUserWithTwitter);
-}
-
-export function* signInWithGithub() {
-    yield takeEvery(SIGNIN_GITHUB_USER, signInUserWithGithub);
+export function* verifyUser() {
+    yield takeEvery(VERIFY_USER, verifyUserWithCode);
 }
 
 export function* signInUser() {
@@ -211,9 +158,7 @@ export function* signOutUser() {
 export default function* rootSaga() {
     yield all([fork(signInUser),
         fork(createUserAccount),
-        fork(signInWithGoogle),
-        fork(signInWithFacebook),
-        fork(signInWithTwitter),
-        fork(signInWithGithub),
-        fork(signOutUser)]);
+        //fork(signInWithGoogle),
+        fork(signOutUser),
+        fork(verifyUser)]);
 }

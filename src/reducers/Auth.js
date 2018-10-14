@@ -10,7 +10,8 @@ import {
     SIGNIN_TWITTER_USER_SUCCESS,
     SIGNIN_USER_SUCCESS,
     SIGNOUT_USER_SUCCESS,
-    SIGNUP_USER_SUCCESS
+    SIGNUP_USER_SUCCESS,
+    VERIFY_SUCCESS
 } from "constants/ActionTypes";
 
 const INIT_STATE = {
@@ -18,17 +19,30 @@ const INIT_STATE = {
     alertMessage: '',
     showMessage: false,
     initURL: '',
+    verify_User: false,
+    success: false, 
     authUser: localStorage.getItem('user_id'),
 };
 
 
 export default (state = INIT_STATE, action) => {
+    console.log(action.type)
     switch (action.type) {
         case SIGNUP_USER_SUCCESS: {
             return {
                 ...state,
                 loader: false,
-                authUser: action.payload
+                verify_User:true
+
+            }
+        }
+        case VERIFY_SUCCESS: {
+            return {
+                ...state,
+                loader: false,
+                success:true,
+                verify_User:false
+
             }
         }
         case SIGNIN_USER_SUCCESS: {

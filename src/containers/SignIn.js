@@ -20,8 +20,8 @@ class SignIn extends React.Component {
     constructor() {
         super();
         this.state = {
-            email: 'demo@example.com',
-            password: 'demo#123'
+            email: '',
+            password: ''
         }
     }
 
@@ -81,7 +81,7 @@ class SignIn extends React.Component {
 
                                     <div className="mb-3 d-flex align-items-center justify-content-between">
                                         <Button onClick={() => {
-                                            this.props.showAuthLoader();
+                                            //this.props.showAuthLoader();
                                             this.props.userSignIn({email, password});
                                         }} variant="raised" color="primary">
                                             <IntlMessages id="appModule.signIn"/>
