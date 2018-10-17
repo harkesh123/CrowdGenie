@@ -7,7 +7,7 @@ import "./helper/firebase";
 import App from "./containers/App";
 
 export const store = configureStore();
-
+ 
 const MainApp = () =>
     <Provider store={store}>
         <ConnectedRouter history={history}>

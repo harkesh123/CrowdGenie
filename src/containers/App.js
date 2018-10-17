@@ -39,13 +39,13 @@ import {
     PINK
 } from 'constants/ThemeColors';
 
-import MainApp from 'app/index';
+import MainApp from 'Lender/index';
 import SignIn from './SignIn';
-import Verify from './Verification';
 import SignUp from './SignUp';
 import {setInitUrl} from '../actions/Auth';
 import RTL from 'util/RTL';
 import asyncComponent from 'util/asyncComponent';
+import { Auth } from 'aws-amplify';
 
 const RestrictedRoute = ({component: Component, ...rest, authUser}) =>
     <Route
@@ -63,9 +63,22 @@ const RestrictedRoute = ({component: Component, ...rest, authUser}) =>
 
 class App extends Component {
 
-    componentWillMount() {
+    async componentWillMount() {
         if (this.props.initURL === '') {
             this.props.setInitUrl(this.props.history.location.pathname);
+        }
+        let user = await Auth.currentAuthenticatedUser();
+        console.log(user.attributes.profile)
+        switch(user.attributes.profile)
+        {
+        	case "Lender":  {console.log("lender");
+        	                  break;}
+        	case "Borrower":  {console.log("Borrower");
+        	                      break;}
+        	case "Admin":  {console.log("Admin");
+                                 break;}
+        	default: {console.log("error");
+                        break;}
         }
     }
 
@@ -151,7 +164,7 @@ class App extends Component {
             if (authUser === null) {
                 return ( <Redirect to={'/signin'}/> );
             } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
-                return ( <Redirect to={'/app/dashboard/default'}/> );
+                return ( <Redirect to={'/lender/dashboard/default'}/> );
             } else {
                 return ( <Redirect to={initURL}/> );
             }
@@ -174,11 +187,11 @@ class App extends Component {
                         <RTL>
                             <div className="app-main">
                                 <Switch>
-                                    <RestrictedRoute path={`${match.url}app`} authUser={authUser}
+                                    <RestrictedRoute path={`${match.url}lender`} authUser={authUser}
                                                      component={MainApp}/>
                                     <Route path='/signin' component={SignIn}/>
-                                    <Route path='/verify' component={Verify}/>
                                     <Route path='/signup' component={SignUp}/>
+
                                     <Route
                                         component={asyncComponent(() => import('app/routes/extraPages/routes/404'))}/>
                                 </Switch>

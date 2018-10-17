@@ -25,8 +25,6 @@ import {
     userTwitterSignInSuccess
 } from "../actions/Auth";
 
-let user_name;
-
 const createUserWithEmailPasswordRequest = async (email, password,profile,name,phone_number) =>
   await Auth.signUp({
     username:email,
@@ -43,17 +41,21 @@ const createUserWithEmailPasswordRequest = async (email, password,profile,name,p
     .catch(err => {return err});
 
 
-const verifyWithCode = async (code) =>
-  await Auth.confirmSignUp(user_name, code)
+const verifyWithCode = async (code,email) =>
+  await Auth.confirmSignUp(email, code)
   .then(data => {return data})
   .catch(err =>  {return err});
 
 const signInUserWithEmailPasswordRequest = async (email, password) =>
     await Auth.signIn(email, password)
-    .then(user => user)
-    .catch(err => err);
+    .then(user => {return user})
+    .catch(err => {return err});
 
-const signOutRequest = async () =>{}
+const signOutRequest = async () =>
+  await Auth.signOut()
+    .then(data => console.log(data))
+    .catch(err => console.log(err));
+
 
 const signInUserWithFacebookRequest = async () =>{}
 
@@ -63,8 +65,7 @@ const signInUserWithTwitterRequest = async () =>{}
 
 function* createUserWithEmailPassword({payload}) {
     const {email, password,profile,name,phone_number} = payload;
-    user_name=email;
-     try {
+    try {
      const signUpUser = yield call(createUserWithEmailPasswordRequest, email, password,profile,name,phone_number);
      console.log(signUpUser);
      if (!signUpUser.userSub) {
@@ -75,9 +76,8 @@ function* createUserWithEmailPassword({payload}) {
      }
     }
     catch (error) {
-     console.log(error)
-    yield put(showAuthMessage(error));
-    }
+     yield put(showAuthMessage(error));
+   }
 }
 
 // function* signInUserWithGoogle() {
@@ -98,23 +98,22 @@ function* createUserWithEmailPassword({payload}) {
 
 function* signInUserWithEmailPassword({payload}) {
     const {email, password} = payload;
-    // try {
+     try {
          const signInUser = yield call(signInUserWithEmailPasswordRequest, email, password);
-         console.log(signInUser)
-    //     if (signInUser.message) {
-    //         yield put(showAuthMessage(signInUser.message));
-    //     } else {
-    //         localStorage.setItem('user_id', signInUser.user.uid);
-    //         yield put(userSignInSuccess(signInUser.user.uid));
-    //     }
-    // } catch (error) {
-    //     yield put(showAuthMessage(error));
-    // }
+        if (signInUser.message) {
+            yield put(showAuthMessage(signInUser.message));
+         } else {
+            //localStorage.setItem('user_id', email);
+             yield put(userSignInSuccess(email));
+         }
+     } catch (error) {
+         yield put(showAuthMessage(error));
+    }
 }
 function* verifyUserWithCode({payload}) {
-    const {code} = payload;
-    const verify = yield call(verifyWithCode, code);
-    if(verify!=="SUCCESS"){
+    const {code,email} = payload;
+    const verify = yield call(verifyWithCode, code,email);
+    if(verify==="SUCCESS"){
     yield put(verifySuccess())
     }
     else{
