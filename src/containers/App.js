@@ -39,9 +39,11 @@ import {
     PINK
 } from 'constants/ThemeColors';
 
-import MainApp from 'Lender/index';
-import MainApp1 from 'Borrower/index';
-import MainApp2 from 'Admin/index';
+import MainApp from 'app/index';
+import AdminApp from "app/admin";
+import LenderApp from "app/lender";
+import BorrowerApp from "app/borrower";
+
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import {setInitUrl} from '../actions/Auth';
@@ -64,15 +66,17 @@ const RestrictedRoute = ({component: Component, ...rest, authUser}) =>
     />;
 
 class App extends Component {
-
-    async componentWillMount() {
+	
+async componentWillMount() {
         if (this.props.initURL === '') {
             this.props.setInitUrl(this.props.history.location.pathname);
         }
         if(this.props.authUser){
         let user =await Auth.currentAuthenticatedUser()
         console.log(user)
+        this.props.history.push('/'+user.attributes.profile);
         }
+    }
         // switch(user.attributes.profile)
         // {
         // 	case "Lender":  {console.log("lender");
@@ -83,8 +87,7 @@ class App extends Component {
         //                          break;}
         // 	default: {console.log("error");
         //                 break;}
-        // }
-    }
+       // }
 
     getColorTheme(themeColor, applyTheme) {
         switch (themeColor) {
@@ -155,6 +158,8 @@ class App extends Component {
         }
         return applyTheme;
     }
+    
+     
 
     render() {
         const {match, location, themeColor, isDarkTheme, locale, authUser, initURL, isDirectionRTL} = this.props;
@@ -164,14 +169,15 @@ class App extends Component {
         } else {
             applyTheme = this.getColorTheme(themeColor, applyTheme);
         }
-        if (location.pathname === '/') {
+       if (location.pathname === '/') {
             if (authUser === null) {
                 return ( <Redirect to={'/signin'}/> );
             } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
-                return ( <Redirect to={'/signin'}/> );
+                return ( <Redirect to={'/app'}/> );
             } else {
                 return ( <Redirect to={initURL}/> );
             }
+            console.log(authUser)
         }
         if (isDirectionRTL) {
             applyTheme.direction = 'rtl';
@@ -191,12 +197,13 @@ class App extends Component {
                         <RTL>
                             <div className="app-main">
                                 <Switch>
+                                    <Route path={'/app'} component={MainApp}/>
                                     <RestrictedRoute path={`${match.url}lender`} authUser={authUser}
-                                                     component={MainApp}/>
-	                                <RestrictedRoute path={`${match.url}borrower`} authUser={authUser}
-	                                                 component={MainApp1}/>
-	                                <RestrictedRoute path={`${match.url}admin`} authUser={authUser}
-	                                                 component={MainApp2}/>
+                                                     component={LenderApp}/>
+                                    <RestrictedRoute path={`${match.url}borrower`} authUser={authUser}
+                                                     component={BorrowerApp}/>
+                                    <RestrictedRoute path={`${match.url}admin`} authUser={authUser}
+                                                     component={AdminApp}/>                                  	                                
                                     <Route path='/signin' component={SignIn}/>
                                     <Route path='/signup' component={SignUp}/>
 

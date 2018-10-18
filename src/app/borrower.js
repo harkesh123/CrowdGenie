@@ -2,7 +2,7 @@ import React from "react";
 import {Route, Switch, withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import Header from "components/Header/index";
-import Sidebar from "containers/SideNav/index";
+import Sidebar from "./BorrowerSideNav/index";
 import Footer from "components/Footer";
 import Dashboard from "./routes/dashboard";
 import Components from "./routes/components";
@@ -50,7 +50,7 @@ class App extends React.Component {
 
         return (
             <div className={`app-container ${drawerStyle}`}>
-                <Tour/>
+                
 
                 <Sidebar/>
                 <div className="app-main-container">
@@ -65,6 +65,7 @@ class App extends React.Component {
 
                     <main className="app-main-content-wrapper">
                         <div className="app-main-content">
+                        
                             <Switch>
                                 <Route path={`${match.url}/dashboard`} component={Dashboard}/>
                                 <Route path={`${match.url}/components`} component={Components}/>
@@ -103,6 +104,7 @@ class App extends React.Component {
                                 <Route path={`${match.url}/contact-redux`}
                                        component={asyncComponent(() => import('./routes/contact/redux/index'))}/>
                                 <Route path={`${match.url}/extra-pages`} component={ExtraPages}/>
+                                <Route path={`${match.url}`} component={Dashboard}/>
                                 <Route component={asyncComponent(() => import('app/routes/extraPages/routes/404'))}/>
                             </Switch>
                         </div>

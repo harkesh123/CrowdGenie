@@ -31,7 +31,7 @@ class SignIn extends React.Component {
         }
         if (this.props.authUser !== null) {
         	let user =await Auth.currentAuthenticatedUser()
-            this.props.history.push('/'+user.attributes.profile+'/dashboard/default');
+            this.props.history.push('/'+user.attributes.profile);
         }
         
     }
@@ -50,7 +50,7 @@ class SignIn extends React.Component {
     async check(){
     	if (this.props.authUser !== null) {
         	let user =await Auth.currentAuthenticatedUser()
-            this.props.history.push('/'+user.attributes.profile+'/dashboard/default');
+            this.props.history.push('/'+user.attributes.profile);
         }
     }
 

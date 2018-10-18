@@ -103,7 +103,7 @@ function* createUserWithEmailPassword({payload}) {
         if (signInUser.message) {
             yield put(showAuthMessage(signInUser.message));
          } else {
-             localStorage.setItem('user_id', email);
+             localStorage.setItem('user_id', email)
              yield put(userSignInSuccess(email));
          }
      } catch (error) {

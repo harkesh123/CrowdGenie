@@ -1,5 +1,5 @@
 import React from "react";
-import {Route,Redirect, Switch, withRouter} from "react-router-dom";
+import {Route, Switch, withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import Header from "components/Header/index";
 import Sidebar from "containers/SideNav/index";
@@ -33,10 +33,8 @@ import ColorOption from "containers/Customizer/ColorOption";
 import {isIOS, isMobile} from "react-device-detect";
 import asyncComponent from "../util/asyncComponent";
 import TopNav from "components/TopNav";
-import {Auth} from"aws-amplify"
 
 class App extends React.Component {
-   
 
     render() {
         const {match, drawerType, navigationStyle, horizontalNavPosition} = this.props;
@@ -106,6 +104,7 @@ class App extends React.Component {
                                        component={asyncComponent(() => import('./routes/contact/redux/index'))}/>
                                 <Route path={`${match.url}/extra-pages`} component={ExtraPages}/>
                                 <Route component={asyncComponent(() => import('app/routes/extraPages/routes/404'))}/>
+                             
                             </Switch>
                         </div>
                         <Footer/>

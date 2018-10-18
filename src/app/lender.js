@@ -2,7 +2,7 @@ import React from "react";
 import {Route, Switch, withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import Header from "components/Header/index";
-import Sidebar from "containers/SideNav/index";
+import Sidebar from "./LenderSideNav/index";
 import Footer from "components/Footer";
 import Dashboard from "./routes/dashboard";
 import Components from "./routes/components";
@@ -103,6 +103,7 @@ class App extends React.Component {
                                 <Route path={`${match.url}/contact-redux`}
                                        component={asyncComponent(() => import('./routes/contact/redux/index'))}/>
                                 <Route path={`${match.url}/extra-pages`} component={ExtraPages}/>
+                                <Route path={`${match.url}`} component={eCommerce}/>
                                 <Route component={asyncComponent(() => import('app/routes/extraPages/routes/404'))}/>
                             </Switch>
                         </div>
