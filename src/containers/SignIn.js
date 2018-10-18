@@ -13,6 +13,7 @@ import {
     showAuthMessage,
     userSignIn
 } from "actions/Auth";
+import {Auth} from "aws-amplify";
 class SignIn extends React.Component {
     constructor() {
         super();
@@ -22,14 +23,15 @@ class SignIn extends React.Component {
         }
     }
 
-    componentDidUpdate() {
+    async componentDidUpdate() {
         if (this.props.showMessage) {
             setTimeout(() => {
                 this.props.hideMessage();
             }, 100);
         }
         if (this.props.authUser !== null) {
-            this.props.history.push('/lender/dashboard/default');
+        	let user =await Auth.currentAuthenticatedUser()
+            this.props.history.push('/'+user.attributes.profile+'/dashboard/default');
         }
         
     }
@@ -44,8 +46,16 @@ class SignIn extends React.Component {
         	this.props.showAuthMessage("Enter all the details")
         }
     }
+    
+    async check(){
+    	if (this.props.authUser !== null) {
+        	let user =await Auth.currentAuthenticatedUser()
+            this.props.history.push('/'+user.attributes.profile+'/dashboard/default');
+        }
+    }
 
     render() {
+    	this.check();
         const {
             email,
             password

@@ -40,6 +40,8 @@ import {
 } from 'constants/ThemeColors';
 
 import MainApp from 'Lender/index';
+import MainApp1 from 'Borrower/index';
+import MainApp2 from 'Admin/index';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import {setInitUrl} from '../actions/Auth';
@@ -67,19 +69,21 @@ class App extends Component {
         if (this.props.initURL === '') {
             this.props.setInitUrl(this.props.history.location.pathname);
         }
-        let user = await Auth.currentAuthenticatedUser();
-        console.log(user.attributes.profile)
-        switch(user.attributes.profile)
-        {
-        	case "Lender":  {console.log("lender");
-        	                  break;}
-        	case "Borrower":  {console.log("Borrower");
-        	                      break;}
-        	case "Admin":  {console.log("Admin");
-                                 break;}
-        	default: {console.log("error");
-                        break;}
+        if(this.props.authUser){
+        let user =await Auth.currentAuthenticatedUser()
+        console.log(user)
         }
+        // switch(user.attributes.profile)
+        // {
+        // 	case "Lender":  {console.log("lender");
+        // 	                  break;}
+        // 	case "Borrower":  {<Redirect to={'/Borrower/dashboard/default'}/>;
+        // 	                      break;}
+        // 	case "Admin":  {console.log("Admin");
+        //                          break;}
+        // 	default: {console.log("error");
+        //                 break;}
+        // }
     }
 
     getColorTheme(themeColor, applyTheme) {
@@ -164,7 +168,7 @@ class App extends Component {
             if (authUser === null) {
                 return ( <Redirect to={'/signin'}/> );
             } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
-                return ( <Redirect to={'/lender/dashboard/default'}/> );
+                return ( <Redirect to={'/signin'}/> );
             } else {
                 return ( <Redirect to={initURL}/> );
             }
@@ -189,6 +193,10 @@ class App extends Component {
                                 <Switch>
                                     <RestrictedRoute path={`${match.url}lender`} authUser={authUser}
                                                      component={MainApp}/>
+	                                <RestrictedRoute path={`${match.url}borrower`} authUser={authUser}
+	                                                 component={MainApp1}/>
+	                                <RestrictedRoute path={`${match.url}admin`} authUser={authUser}
+	                                                 component={MainApp2}/>
                                     <Route path='/signin' component={SignIn}/>
                                     <Route path='/signup' component={SignUp}/>
 

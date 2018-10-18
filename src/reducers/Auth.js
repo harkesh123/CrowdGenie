@@ -13,6 +13,7 @@ import {
     SIGNUP_USER_SUCCESS,
     VERIFY_SUCCESS
 } from "constants/ActionTypes";
+import {Auth} from "aws-amplify";
 
 const INIT_STATE = {
     loader: false,

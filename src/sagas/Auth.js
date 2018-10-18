@@ -96,14 +96,14 @@ function* createUserWithEmailPassword({payload}) {
 
 
 
-function* signInUserWithEmailPassword({payload}) {
+ function* signInUserWithEmailPassword({payload}) {
     const {email, password} = payload;
      try {
          const signInUser = yield call(signInUserWithEmailPasswordRequest, email, password);
         if (signInUser.message) {
             yield put(showAuthMessage(signInUser.message));
          } else {
-            //localStorage.setItem('user_id', email);
+             localStorage.setItem('user_id', email);
              yield put(userSignInSuccess(email));
          }
      } catch (error) {

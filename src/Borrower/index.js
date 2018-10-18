@@ -38,6 +38,7 @@ class Borrower extends React.Component {
 
     render() {
         const {match, drawerType, navigationStyle, horizontalNavPosition} = this.props;
+        console.log(match.url)
         const drawerStyle = drawerType.includes(FIXED_DRAWER) ? 'fixed-drawer' : drawerType.includes(COLLAPSED_DRAWER) ? 'collapsible-drawer' : 'mini-drawer';
 
         //set default height and overflow for iOS mobile Safari 10+ support.

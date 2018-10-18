@@ -34,26 +34,12 @@ import {isIOS, isMobile} from "react-device-detect";
 import asyncComponent from "../util/asyncComponent";
 import TopNav from "components/TopNav";
 
-class Admin extends React.Component {
-    async componentWillMount() {
-        let user = await Auth.currentAuthenticatedUser();
-        switch(user.attributes.profile)
-        {
-            case "Lender":  {console.log("lender");
-                              break;}
-            case "Borrower":  {console.log("Borrower");
-                                  break;}
-            case "Admin":  {console.log("Admin");
-                                 break;}
-            default: {console.log("error");
-                        break;}
-        }
-    }
+class App extends React.Component {
 
     render() {
         const {match, drawerType, navigationStyle, horizontalNavPosition} = this.props;
         const drawerStyle = drawerType.includes(FIXED_DRAWER) ? 'fixed-drawer' : drawerType.includes(COLLAPSED_DRAWER) ? 'collapsible-drawer' : 'mini-drawer';
-        console.log("lender")
+
         //set default height and overflow for iOS mobile Safari 10+ support.
         if (isIOS && isMobile) {
             document.body.classList.add('ios-mobile-view-height')
@@ -134,4 +120,4 @@ const mapStateToProps = ({settings}) => {
     const {drawerType, navigationStyle, horizontalNavPosition} = settings;
     return {drawerType, navigationStyle, horizontalNavPosition}
 };
-export default withRouter(connect(mapStateToProps)(Admin));
+export default withRouter(connect(mapStateToProps)(App));
